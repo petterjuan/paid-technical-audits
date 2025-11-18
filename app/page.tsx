@@ -1,6 +1,10 @@
-export default function Page(): JSX.Element {
-  const calendlyUrl = "https://calendly.com/petter2025us/30min";
+import BookingClient from "./components/BookingClient";
 
+// Use a short ISR window so changes (pricing, messaging) appear quickly
+// while still benefiting from CDN caching. Set to 300s (5 minutes).
+export const revalidate = 300;
+
+export default function Page(): JSX.Element {
   return (
     <main className="min-h-screen bg-gray-50 flex items-center justify-center">
       <section className="max-w-4xl mx-auto p-8 bg-white rounded-xl shadow-md">
@@ -31,22 +35,7 @@ export default function Page(): JSX.Element {
             </ul>
           </div>
 
-          <aside className="flex flex-col justify-center gap-4">
-            <div className="bg-blue-50 p-4 rounded">
-              <div className="text-xs uppercase text-blue-700 font-semibold">Offer</div>
-              <div className="mt-1 font-bold text-lg">$3,500 AI Funnel Audit</div>
-              <div className="text-sm text-gray-700 mt-2">Recover 15 to 30 percent of lost revenue with a targeted funnel and infra audit.</div>
-            </div>
-
-            <a
-              href={calendlyUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block text-center bg-blue-900 text-white py-3 rounded-md font-semibold"
-            >
-              Book Audit
-            </a>
-          </aside>
+          <BookingClient />
         </div>
 
         <footer className="mt-6 text-xs text-gray-500">
@@ -62,6 +51,7 @@ export default function Page(): JSX.Element {
                 width="100%"
                 height="700"
                 frameBorder="0"
+                loading="lazy"
               />
             </div>
           </div>
