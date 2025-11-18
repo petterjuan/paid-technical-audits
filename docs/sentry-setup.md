@@ -44,3 +44,37 @@ Notes
 If you want, I can also:
 - Add a `sentry.properties` or CI steps to upload release artifacts automatically.
 - Configure Sentry environments and integration with Slack/PagerDuty.
+
+CI integration (release & sourcemaps)
+-----------------------------------
+A GitHub Actions workflow has been added at `.github/workflows/sentry-release.yml`.
+It runs on pushes to `main`, builds the app, creates a Sentry release with the commit SHA, uploads `.next` sourcemaps, and finalizes the release.
+
+Required repository secrets (set these in GitHub Settings → Secrets):
+- `SENTRY_AUTH_TOKEN` — Sentry auth token with `project:write` and `org:read` permissions.
+- `SENTRY_ORG` — your Sentry organization slug
+- `SENTRY_PROJECT` — your Sentry project slug
+
+Alerting & Integrations (Slack / PagerDuty)
+-----------------------------------------
+Sentry supports native integrations for Slack and PagerDuty. Recommended approach:
+
+- In Sentry UI, go to `Settings → Integrations` and add the Slack integration (choose channels for alerts).
+- For PagerDuty, add the PagerDuty integration and configure which Sentry projects trigger incidents.
+
+If you prefer programmatic creation of alert rules, Sentry exposes REST APIs — but it's often safer to create alert rules via the Sentry UI where you can test and tune thresholds interactively.
+
+Suggested alert rules to create (in Sentry Alerts UI):
+- High error-rate alert: trigger when the error count for `production` increases by X% over Y minutes.
+- Performance alert: trigger when p95 request duration for the booking flow exceeds a threshold.
+- Transaction duration alert: specific to critical endpoints (e.g., `/api/health` or booking webhook handler).
+
+Notifications
+- Connect Sentry -> Slack to send alerts to a channel.
+- Connect Sentry -> PagerDuty to open incidents for high-severity alerts.
+
+Automatic remediation and runbooks
+--------------------------------
+Once alerts are in place, attach runbooks in Sentry alert rules or the integrations so that on-call responders have direct remediation steps and escalation paths (Slack threads, PagerDuty runbook URLs).
+
+If you want, I can add an example Node script to call Sentry's API to create a sample alert rule from the repo using `SENTRY_AUTH_TOKEN`, or I can create a short GitHub Action that will call the script during deployment to ensure your alert rules are provisioned consistently.

@@ -1,29 +1,8 @@
-"use client";
+import BookingClient from "./components/BookingClient";
 
-import React, { useEffect } from "react";
-import { initObservability, trackEvent } from "../lib/observability";
-
-const calendlyUrl = "https://calendly.com/petter2025us/30min";
+export const revalidate = 3600; // cache this page at the edge / CDN for 1 hour
 
 export default function Page(): JSX.Element {
-  useEffect(() => {
-    void initObservability();
-    try {
-      trackEvent("page_view", { page: "audit_landing" });
-    } catch (_) {
-      // ignore
-    }
-  }, []);
-
-  function handleBookClick() {
-    try {
-      trackEvent("book_cta_click", { url: calendlyUrl });
-    } catch (_) {
-      // ignore
-    }
-    window.open(calendlyUrl, "_blank", "noopener");
-  }
-
   return (
     <main className="min-h-screen bg-gray-50 flex items-center justify-center">
       <section className="max-w-4xl mx-auto p-8 bg-white rounded-xl shadow-md">
@@ -54,20 +33,7 @@ export default function Page(): JSX.Element {
             </ul>
           </div>
 
-          <aside className="flex flex-col justify-center gap-4">
-            <div className="bg-blue-50 p-4 rounded">
-              <div className="text-xs uppercase text-blue-700 font-semibold">Offer</div>
-              <div className="mt-1 font-bold text-lg">$3,500 AI Funnel Audit</div>
-              <div className="text-sm text-gray-700 mt-2">Recover 15 to 30 percent of lost revenue with a targeted funnel and infra audit.</div>
-            </div>
-
-            <button
-              onClick={handleBookClick}
-              className="block w-full text-center bg-blue-900 text-white py-3 rounded-md font-semibold"
-            >
-              Book Audit
-            </button>
-          </aside>
+          <BookingClient />
         </div>
 
         <footer className="mt-6 text-xs text-gray-500">

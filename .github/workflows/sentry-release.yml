@@ -1,0 +1,41 @@
+name: Sentry Release & Sourcemaps
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-upload-sourcemaps:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Create Sentry release
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        run: |
+          npx @sentry/cli releases -o ${{ secrets.SENTRY_ORG }} -p ${{ secrets.SENTRY_PROJECT }} new $GITHUB_SHA
+
+      - name: Upload sourcemaps
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        run: |
+          npx @sentry/cli releases -o ${{ secrets.SENTRY_ORG }} -p ${{ secrets.SENTRY_PROJECT }} files $GITHUB_SHA upload-sourcemaps .next --rewrite --url-prefix "~/_next"
+
+      - name: Finalize Sentry release
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        run: |
+          npx @sentry/cli releases -o ${{ secrets.SENTRY_ORG }} -p ${{ secrets.SENTRY_PROJECT }} finalize $GITHUB_SHA
