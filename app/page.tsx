@@ -1,5 +1,28 @@
+"use client";
+
+import React, { useEffect } from "react";
+import { initObservability, trackEvent } from "../lib/observability";
+
+const calendlyUrl = "https://calendly.com/petter2025us/30min";
+
 export default function Page(): JSX.Element {
-  const calendlyUrl = "https://calendly.com/petter2025us/30min";
+  useEffect(() => {
+    void initObservability();
+    try {
+      trackEvent("page_view", { page: "audit_landing" });
+    } catch (_) {
+      // ignore
+    }
+  }, []);
+
+  function handleBookClick() {
+    try {
+      trackEvent("book_cta_click", { url: calendlyUrl });
+    } catch (_) {
+      // ignore
+    }
+    window.open(calendlyUrl, "_blank", "noopener");
+  }
 
   return (
     <main className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -38,14 +61,12 @@ export default function Page(): JSX.Element {
               <div className="text-sm text-gray-700 mt-2">Recover 15 to 30 percent of lost revenue with a targeted funnel and infra audit.</div>
             </div>
 
-            <a
-              href={calendlyUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block text-center bg-blue-900 text-white py-3 rounded-md font-semibold"
+            <button
+              onClick={handleBookClick}
+              className="block w-full text-center bg-blue-900 text-white py-3 rounded-md font-semibold"
             >
               Book Audit
-            </a>
+            </button>
           </aside>
         </div>
 
@@ -62,6 +83,7 @@ export default function Page(): JSX.Element {
                 width="100%"
                 height="700"
                 frameBorder="0"
+                loading="lazy"
               />
             </div>
           </div>
