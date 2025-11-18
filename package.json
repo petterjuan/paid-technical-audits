@@ -13,18 +13,3 @@
     "react-dom": "^18.2.0"
   }
 }
-{
-  "name": "paid-technical-audits",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start"
-  },
-  "dependencies": {
-    "@sentry/nextjs": "^10.25.0",
-    "next": "^13.4.12",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
-  }
-}
