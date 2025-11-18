@@ -14,10 +14,17 @@ export async function initObservability(): Promise<void> {
   if (sentryInitialized) return;
 
   try {
-    // Importing `@sentry/nextjs` only when available to avoid hard dependency in this example.
-    // In production, install `@sentry/nextjs` and configure SENTRY_DSN in environment.
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const Sentry = require('@sentry/nextjs');
+    // Use dynamic import so bundlers don't statically require the package
+    // when it may intentionally be absent in some environments.
+    // In production, keep `@sentry/nextjs` installed and set `SENTRY_DSN`.
+    const mod = await import('@sentry/nextjs').catch(() => null);
+    const Sentry = mod ? (mod as any).default || mod : null;
+
+    if (!Sentry) {
+      // eslint-disable-next-line no-console
+      console.warn('Sentry package not found; skipping initialization');
+      return;
+    }
 
     if (process.env.SENTRY_DSN) {
       Sentry.init({
@@ -42,10 +49,16 @@ export function trackEvent(event: string, props?: Record<string, unknown>) {
 
   try {
     if (sentryInitialized) {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const Sentry = require('@sentry/nextjs');
-      // @ts-ignore
-      Sentry.captureMessage(JSON.stringify(payload));
+      // dynamic import to avoid static bundling issues
+      import('@sentry/nextjs')
+        .then((m) => {
+          const Sentry = (m as any).default || m;
+          // @ts-ignore
+          Sentry.captureMessage(JSON.stringify(payload));
+        })
+        .catch(() => {
+          // ignore
+        });
       return;
     }
   } catch (_) {

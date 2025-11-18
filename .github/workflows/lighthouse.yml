@@ -19,7 +19,7 @@ jobs:
           node-version: 20
 
       - name: Install deps
-        run: npm ci
+        run: npm install
 
       - name: Build
         run: npm run build
@@ -28,7 +28,7 @@ jobs:
         run: |
           nohup npm run start &
           # give server time to start
-          sleep 5
+          sleep 10
 
       - name: Run Lighthouse CI
         run: npx @lhci/cli autorun --config=.lighthouseci/lighthouserc.js
