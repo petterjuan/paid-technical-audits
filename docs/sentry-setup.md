@@ -45,6 +45,31 @@ If you want, I can also:
 - Add a `sentry.properties` or CI steps to upload release artifacts automatically.
 - Configure Sentry environments and integration with Slack/PagerDuty.
 
+Programmatic alert provisioning
+--------------------------------
+To keep alert rules reproducible, this repo includes a simple provisioning script and a manual GitHub Action that will POST JSON templates to Sentry's project rules API.
+
+Files added:
+- `scripts/sentry/provision_alerts.js` — posts templates to `/api/0/projects/:org/:project/rules/`
+- `scripts/sentry/templates/` — directory for alert rule JSON templates. A sample `high_error_rate_rule.json` is included as a starting point.
+- `.github/workflows/provision-sentry-alerts.yml` — GitHub Action (manual `workflow_dispatch`) to run the provisioning script.
+
+How to run (locally):
+
+```bash
+SENTRY_AUTH_TOKEN=... SENTRY_ORG=your-org SENTRY_PROJECT=your-project node scripts/sentry/provision_alerts.js
+```
+
+How to run in GitHub Actions:
+
+1. Add `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, and `SENTRY_PROJECT` as repository secrets.
+2. Open the repo Actions tab → `Provision Sentry Alerts` → Run workflow.
+
+Notes & caution:
+- The JSON templates in `scripts/sentry/templates/` are intentionally generic and may need small adjustments depending on your Sentry org's available filters/actions and the API schema version.
+- Always test in a staging project before provisioning rules in production.
+
+
 CI integration (release & sourcemaps)
 -----------------------------------
 A GitHub Actions workflow has been added at `.github/workflows/sentry-release.yml`.
