@@ -1,6 +1,8 @@
 import BookingClient from "./components/BookingClient";
 
-export const revalidate = 3600; // cache this page at the edge / CDN for 1 hour
+// Use a short ISR window so changes (pricing, messaging) appear quickly
+// while still benefiting from CDN caching. Set to 300s (5 minutes).
+export const revalidate = 300;
 
 export default function Page(): JSX.Element {
   return (
