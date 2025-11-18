@@ -1,0 +1,18 @@
+{
+  "name": "High error rate - example",
+  "actionMatch": "all",
+  "filterMatch": "all",
+  "actions": [
+    {
+      "id": "sentry.rules.actions.NotifyEmailAction",
+      "settings": { "targetType": "project_owner" }
+    }
+  ],
+  "filters": [
+    {
+      "id": "sentry.rules.filters.event_frequency.EventFrequencyFilter",
+      "value": { "comparison": "gt", "count": 25, "interval": "1h" }
+    }
+  ],
+  "frequency": 30
+}

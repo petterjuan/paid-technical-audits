@@ -1,0 +1,28 @@
+name: Provision Sentry Alerts
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  provision-alerts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Run Sentry provision script
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+          SENTRY_API_BASE: ${{ secrets.SENTRY_API_BASE }}
+        run: |
+          node scripts/sentry/provision_alerts.js
